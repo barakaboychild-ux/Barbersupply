@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #05101F;
+  --color-sky: #00A3FF;
+  --color-ice: #E1F1F0;
+
+  --font-heading: "Outfit", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
+
+@layer base {
+  :root {
+    --navy: 5, 16, 31;
+    --sky: 0, 163, 255;
+    --ice: 225, 241, 240;
+  }
+
+  body {
+    @apply font-body bg-white text-navy;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading tracking-tight;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-navy text-white px-8 py-4 rounded-full font-bold uppercase text-[10px] tracking-[0.2em] hover:bg-sky transition-all duration-300 shadow-lg hover:shadow-sky/20 hover:-translate-y-0.5;
+  }
+
+  .btn-secondary {
+    @apply bg-ice text-navy px-8 py-4 rounded-full font-bold uppercase text-[10px] tracking-[0.2em] hover:bg-sky hover:text-white transition-all duration-300;
+  }
+
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl;
+  }
+
+  .product-card {
+    @apply bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-navy/5 transition-all duration-500;
+  }
+}
+
+/* Custom Animations */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
