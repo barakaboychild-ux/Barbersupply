@@ -223,7 +223,7 @@ export default function BuyPage() {
 
                                         {/* Option 1: Payment on Delivery */}
                                         <div
-                                            onClick={() => { setPaymentMethod('delivery'); setStkSent(false); }}
+                                            onClick={() => setPaymentMethod('delivery')}
                                             className={`flex items-center gap-4 p-5 rounded-2xl border cursor-pointer transition-all ${paymentMethod === 'delivery'
                                                 ? 'bg-sky/10 border-sky/40'
                                                 : 'bg-white/5 border-white/10 hover:border-white/20'
