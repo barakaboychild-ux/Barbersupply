@@ -234,7 +234,12 @@ function StaffDashboardContent() {
         if (!confirm("Are you sure you want to delete this product?")) return;
 
         const { error } = await supabase.from('products').delete().eq('id', id);
-        if (!error) fetchProducts();
+        if (!error) {
+            fetchProducts();
+        } else {
+            console.error("Scale error deleting product:", error);
+            alert(`Failed to delete product: ${error.message || "Permissions denied"}`);
+        }
     };
 
     const getStatusColor = (status: string) => {
