@@ -1,12 +1,12 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Plus, Edit, Trash2, LogOut, Package, Image as ImageIcon, Loader2, Save, X, ShoppingBag, Eye, ChevronDown } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 type Tab = 'products' | 'orders' | 'settings';
 
-export default function StaffDashboard() {
+function StaffDashboardContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const tabParam = searchParams.get('tab');
@@ -806,5 +806,13 @@ export default function StaffDashboard() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function StaffDashboard() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-navy flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-4 border-sky border-t-transparent" /></div>}>
+            <StaffDashboardContent />
+        </Suspense>
     );
 }
