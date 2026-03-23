@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Menu, ShoppingBag, X, Home, Package, Info, Phone } from "lucide-react";
+import { Menu, ShoppingBag, X, Home, Package, Info, Phone, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "./CartContext";
 import { supabase } from "@/lib/supabase";
@@ -15,6 +15,7 @@ export default function Header() {
     const navItems = [
         { name: 'Home', path: '/', icon: Home },
         { name: 'Products', path: '/products', icon: Package },
+        { name: 'Track Order', path: '/track', icon: Search },
         { name: 'About', path: '/about', icon: Info },
         { name: 'Contact', path: '/contact', icon: Phone }
     ];

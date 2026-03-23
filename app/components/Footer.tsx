@@ -66,10 +66,10 @@ export default function Footer() {
                     <div className="space-y-8">
                         <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-sky">Links</h4>
                         <ul className="space-y-4">
-                            {['Home', 'Products', 'About', 'Contact'].map((item) => (
+                            {['Home', 'Products', 'Track Order', 'About', 'Contact'].map((item) => (
                                 <li key={item}>
                                     <button
-                                        onClick={() => router.push(item === 'Home' ? '/' : `/${item.toLowerCase()}`)}
+                                        onClick={() => router.push(item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '')}`)}
                                         className="text-sm font-bold text-white/40 hover:text-sky transition-colors uppercase tracking-widest"
                                     >
                                         {item}
