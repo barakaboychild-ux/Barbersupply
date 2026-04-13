@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Menu, ShoppingBag, X, Home, Package, Info, Phone, Search } from "lucide-react";
+import { Menu, ShoppingBag, X, Home, Package, Info, Phone, Search, Truck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "./CartContext";
 import { supabase } from "@/lib/supabase";
@@ -15,7 +15,7 @@ export default function Header() {
     const navItems = [
         { name: 'Home', path: '/', icon: Home },
         { name: 'Products', path: '/products', icon: Package },
-        { name: 'Track Order', path: '/track', icon: Search },
+        { name: 'Track Order', path: '/track', icon: Truck },
         { name: 'About', path: '/about', icon: Info },
         { name: 'Contact', path: '/contact', icon: Phone }
     ];
@@ -24,76 +24,107 @@ export default function Header() {
 
     return (
         <nav className="fixed top-0 w-full z-[70] bg-navy/95 backdrop-blur-md border-b border-white/5">
-            <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-                <div className="flex items-center gap-4">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
+                {/* Top Row: Logo & Menu Icon */}
+                <div className="flex items-center justify-start h-16 sm:h-20 gap-4">
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="text-white/60 hover:text-sky transition-colors"
+                        className="text-white/60 hover:text-sky transition-colors p-2"
                     >
                         <Menu size={24} />
                     </button>
+
                     <motion.h1
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="font-black tracking-tighter text-white cursor-pointer leading-tight"
+                        className="font-black tracking-tighter text-white cursor-pointer leading-tight py-2"
                         onClick={() => router.push('/')}
                     >
-                        <div className="flex items-center gap-1 md:gap-2 text-xl md:text-2xl">
+                        <div className="flex items-center gap-1 sm:gap-2 text-lg xs:text-xl md:text-2xl whitespace-nowrap">
                             <span className="text-sky">Barber</span>
                             <span className="opacity-40">&</span>
-                            <span className="hidden md:inline">Cosmetics Supply</span>
-                        </div>
-                        <div className="md:hidden text-[10px] uppercase tracking-widest opacity-80 mt-0.5">
-                            Cosmetics Supply
+                            <span>Cosmetics Supply</span>
                         </div>
                     </motion.h1>
                 </div>
 
-                {!pathname.startsWith('/staff') && (
-                    <div className="flex items-center gap-7 sm:gap-10">
-                        {navItems.map((item, idx) => {
-                            const Icon = item.icon;
-                            return (
-                                <motion.button
-                                    key={item.name}
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.1 * idx }}
-                                    className={`transition-colors flex flex-col items-center justify-center p-2 lg:p-0 ${pathname === item.path ? "text-sky" : "text-white/60 hover:text-sky"
-                                        }`}
-                                    onClick={() => router.push(item.path)}
-                                >
-                                    <Icon size={22} className="lg:hidden" />
-                                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] hidden lg:block">
-                                        {item.name}
-                                    </span>
-                                </motion.button>
-                            );
-                        })}
-                    </div>
-                )}
-
-                <div className="flex items-center gap-6">
-                    {(!isBuyPage && !pathname.startsWith('/staff')) && (
-                        <button
-                            onClick={() => setIsCartOpen(true)}
-                            className="relative p-2 text-white hover:text-sky transition-colors group"
-                        >
-                            <ShoppingBag size={24} />
-                            <AnimatePresence>
-                                {cartCount > 0 && (
-                                    <motion.span
-                                        initial={{ scale: 0 }}
-                                        animate={{ scale: 1 }}
-                                        exit={{ scale: 0 }}
-                                        className="absolute -top-1 -right-1 bg-sky text-navy text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-lg"
+                {/* Bottom Row: Navigation Links & Cart (Mobile) / Desktop Nav */}
+                <div className="flex items-center justify-between pb-3 sm:pb-0 sm:h-0">
+                    {!pathname.startsWith('/staff') && (
+                        <div className="flex items-center justify-between w-full lg:w-auto lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:top-1/2 lg:-translate-y-1/2 lg:h-full lg:gap-10">
+                            {navItems.map((item, idx) => {
+                                const Icon = item.icon;
+                                return (
+                                    <motion.button
+                                        key={item.name}
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.05 * idx }}
+                                        className={`transition-all flex flex-col items-center justify-center p-1 sm:p-2 min-w-[50px] ${pathname === item.path ? "text-sky" : "text-white/40 hover:text-sky"
+                                            }`}
+                                        onClick={() => router.push(item.path)}
                                     >
-                                        {cartCount}
-                                    </motion.span>
-                                )}
-                            </AnimatePresence>
-                        </button>
+                                        <Icon size={18} className="lg:hidden" />
+                                        <span className="text-[8px] font-black uppercase tracking-widest mt-1 lg:hidden">
+                                            {item.name.split(' ')[0]}
+                                        </span>
+                                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] hidden lg:block">
+                                            {item.name}
+                                        </span>
+                                    </motion.button>
+                                );
+                            })}
+                            
+                            {/* Mobile Cart in Bottom Row */}
+                            {(!isBuyPage && !pathname.startsWith('/staff')) && (
+                                <button
+                                    onClick={() => setIsCartOpen(true)}
+                                    className="relative flex flex-col items-center justify-center p-1 min-w-[50px] text-white/40 hover:text-sky transition-all lg:hidden"
+                                >
+                                    <div className="relative">
+                                        <ShoppingBag size={18} />
+                                        <AnimatePresence>
+                                            {cartCount > 0 && (
+                                                <motion.span
+                                                    initial={{ scale: 0 }}
+                                                    animate={{ scale: 1 }}
+                                                    exit={{ scale: 0 }}
+                                                    className="absolute -top-2 -right-2 bg-sky text-navy text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-lg"
+                                                >
+                                                    {cartCount}
+                                                </motion.span>
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
+                                    <span className="text-[8px] font-black uppercase tracking-widest mt-1">Cart</span>
+                                </button>
+                            )}
+                        </div>
                     )}
+
+                    {/* Desktop Cart Button */}
+                    <div className="hidden lg:flex items-center gap-6 absolute right-6 top-1/2 -translate-y-1/2">
+                        {(!isBuyPage && !pathname.startsWith('/staff')) && (
+                            <button
+                                onClick={() => setIsCartOpen(true)}
+                                className="relative p-2 text-white hover:text-sky transition-colors group"
+                            >
+                                <ShoppingBag size={24} />
+                                <AnimatePresence>
+                                    {cartCount > 0 && (
+                                        <motion.span
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            exit={{ scale: 0 }}
+                                            className="absolute -top-1 -right-1 bg-sky text-navy text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-lg"
+                                        >
+                                            {cartCount}
+                                        </motion.span>
+                                    )}
+                                </AnimatePresence>
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
 

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Search, Package, Clock, CheckCircle2, AlertCircle, ArrowLeft, MapPin, Phone, User, ShoppingBag } from "lucide-react";
+import { Search, Package, Clock, CheckCircle2, AlertCircle, ArrowLeft, MapPin, Phone, User, ShoppingBag, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 
@@ -30,17 +30,16 @@ function TrackOrderContent() {
         setOrderItems([]);
 
         try {
-            // Validate UUID format quickly
-            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-            if (!uuidRegex.test(id.trim())) {
-                throw new Error("Invalid Order ID format. Please check your confirmation.");
+            // Check if it's a short ID (8 chars) or a UUID
+            let query = supabase.from('orders').select('*');
+            
+            if (id.trim().length === 8) {
+                query = query.eq('short_id', id.trim().toUpperCase());
+            } else {
+                query = query.eq('id', id.trim());
             }
 
-            const { data: orderData, error: fetchError } = await supabase
-                .from('orders')
-                .select('*')
-                .eq('id', id.trim())
-                .single();
+            const { data: orderData, error: fetchError } = await query.single();
 
             if (fetchError) {
                 if (fetchError.code === 'PGRST116') {

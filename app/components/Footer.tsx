@@ -29,10 +29,10 @@ export default function Footer() {
     }, []);
 
     return (
-        <footer className="bg-navy pt-32 pb-12 px-6 text-white border-t border-white/5">
+        <footer className="bg-navy pt-16 pb-12 px-6 text-white border-t border-white/5">
             <div className="max-w-7xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-20 mb-32">
-                    <div className="space-y-8">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-10 sm:gap-20 mb-16 sm:mb-32">
+                    <div className="col-span-2 lg:col-span-1 space-y-8">
                         <h2 className="text-3xl font-black tracking-tighter uppercase leading-none">
                             Barber <span className="text-sky">&</span> Cosmetics Supply
                         </h2>

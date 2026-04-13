@@ -55,8 +55,8 @@ export default function ProductsPage() {
     }, [activeCategory, products]);
 
     return (
-        <div className="min-h-screen bg-white pt-20">
-            <header className="bg-ice/30 py-20 px-6">
+        <div className="min-h-screen bg-white pt-[140px] sm:pt-20">
+            <header className="bg-ice/30 py-10 sm:py-20 px-6">
                 <div className="max-w-7xl mx-auto">
                     <button
                         onClick={() => router.push('/')}
@@ -72,10 +72,10 @@ export default function ProductsPage() {
                 </div>
             </header>
 
-            <main className="max-w-7xl mx-auto px-6 py-20">
+            <main className="max-w-7xl mx-auto px-6 py-10 sm:py-20">
                 <div className="flex flex-col lg:flex-row gap-12">
                     {/* Sidebar Filters */}
-                    <aside className="lg:w-64 space-y-10">
+                    <aside className="lg:w-64 space-y-6 sm:space-y-10">
                         <div className="space-y-6">
                             <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-sky">Categories</h3>
                             <div className="flex flex-col gap-2">
@@ -110,7 +110,7 @@ export default function ProductsPage() {
                     </aside>
 
                     {/* Product Grid */}
-                    <div className="flex-1 space-y-12">
+                    <div className="flex-1 space-y-8 sm:space-y-12">
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-black uppercase tracking-widest text-navy/40">
                                 Showing {filteredProducts.length} Results
@@ -127,10 +127,10 @@ export default function ProductsPage() {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
                             {filteredProducts.map((item) => (
                                 <div key={item.id} className="product-card group animate-in fade-in duration-500">
-                                    <div className="aspect-[4/5] bg-ice/50 rounded-[2rem] mb-8 overflow-hidden relative">
+                                    <div className="aspect-[4/5] bg-ice/50 rounded-2xl sm:rounded-[2rem] mb-3 sm:mb-8 overflow-hidden relative">
                                         <div
                                             onClick={() => setSelectedProduct(item)}
                                             className="w-full h-full cursor-pointer"
@@ -142,14 +142,15 @@ export default function ProductsPage() {
                                             />
                                         </div>
                                         {item.offer_price && (
-                                            <div className="absolute top-4 left-4 flex flex-col gap-2">
-                                                <div className="bg-sky text-navy px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl">
-                                                    Special Offer
+                                            <div className="absolute top-2 left-2 sm:top-4 sm:left-4 flex flex-col gap-1 sm:gap-2">
+                                                <div className="bg-sky text-navy px-2 sm:px-4 py-1 sm:py-1.5 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest shadow-xl">
+                                                    Offer
                                                 </div>
                                                 {item.offer_expiry && (
-                                                    <div className="bg-navy/80 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-[9px] font-bold flex items-center gap-2">
-                                                        <Clock size={12} />
-                                                        Ends Soon
+                                                    <div className="bg-navy/80 backdrop-blur-md text-white px-2 sm:px-4 py-1 sm:py-1.5 rounded-full text-[7px] sm:text-[9px] font-bold flex items-center gap-1 sm:gap-2">
+                                                        <Clock size={10} className="sm:w-3 sm:h-3" />
+                                                        <span className="hidden xs:inline">Ends Soon</span>
+                                                        <span className="xs:hidden">Soon</span>
                                                     </div>
                                                 )}
                                             </div>
@@ -159,23 +160,24 @@ export default function ProductsPage() {
                                                 e.stopPropagation();
                                                 addToCart(item);
                                             }}
-                                            className="absolute bottom-4 right-4 w-12 h-12 bg-white rounded-full flex items-center justify-center text-navy shadow-xl opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-sky hover:text-white"
+                                            className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 w-8 h-8 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center text-navy shadow-xl opacity-100 sm:opacity-0 sm:translate-y-4 sm:group-hover:opacity-100 sm:group-hover:translate-y-0 transition-all duration-300 hover:bg-sky hover:text-white"
                                         >
-                                            <ShoppingCart size={20} />
+                                            <ShoppingCart size={14} className="sm:hidden" />
+                                            <ShoppingCart size={20} className="hidden sm:block" />
                                         </button>
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-sky">{item.category}</span>
-                                        <h5 className="text-xl font-black text-navy leading-tight uppercase group-hover:text-sky transition-colors">{item.name}</h5>
-                                        <div className="flex items-center gap-4 pt-2">
+                                    <div className="space-y-1 sm:space-y-2">
+                                        <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-sky">{item.category}</span>
+                                        <h5 className="text-sm sm:text-xl font-black text-navy leading-tight uppercase group-hover:text-sky transition-colors">{item.name}</h5>
+                                        <div className="flex flex-wrap items-center gap-2 sm:gap-4 pt-1 sm:pt-2">
                                             {item.offer_price ? (
                                                 <>
-                                                    <span className="text-2xl font-black text-navy">Ksh {item.offer_price.toFixed(2)}</span>
-                                                    <span className="text-navy/20 text-sm line-through font-bold">Ksh {item.price.toFixed(2)}</span>
+                                                    <span className="text-base sm:text-2xl font-black text-navy">Ksh {item.offer_price.toFixed(0)}</span>
+                                                    <span className="text-navy/20 text-[10px] sm:text-sm line-through font-bold">Ksh {item.price.toFixed(0)}</span>
                                                 </>
                                             ) : (
-                                                <span className="text-2xl font-black text-navy">Ksh {item.price.toFixed(2)}</span>
+                                                <span className="text-base sm:text-2xl font-black text-navy">Ksh {item.price.toFixed(0)}</span>
                                             )}
                                         </div>
                                     </div>

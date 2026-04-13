@@ -37,7 +37,7 @@ export default function ContactPage() {
     };
 
     return (
-        <div className="min-h-screen bg-white pt-20">
+        <div className="min-h-screen bg-white pt-[140px] sm:pt-20">
 
             <header className="bg-ice/30 py-32 px-6">
                 <div className="max-w-7xl mx-auto">

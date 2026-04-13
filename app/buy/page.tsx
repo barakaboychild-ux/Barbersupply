@@ -21,12 +21,21 @@ export default function BuyPage() {
 
     const MPESA_MANUAL_NUMBER = '0700622595';
 
+    const generateShortId = () => {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+        let result = '';
+        for (let i = 0; i < 8; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
+    };
+
     const handleOrder = async (e: React.FormEvent) => {
         e.preventDefault();
-
         setLoading(true);
 
         try {
+            const shortId = generateShortId();
             const { data: order, error: orderError } = await supabase
                 .from('orders')
                 .insert({
@@ -35,7 +44,8 @@ export default function BuyPage() {
                     delivery_address: formData.address,
                     total_amount: totalPrice,
                     payment_method: paymentMethod,
-                    status: 'pending'
+                    status: 'pending',
+                    short_id: shortId
                 })
                 .select()
                 .single();
@@ -56,39 +66,65 @@ export default function BuyPage() {
 
             if (itemsError) throw itemsError;
 
+            setLoading(false);
             setIsOrdered(true);
-            setTimeout(() => clearCart(), 100);
+            // We pass the shortId to the state if needed, or just let the success screen use it from the 'order' object
+            setFormData({ ...formData, full_name: shortId }); // Temporary way to pass it to the success screen if needed, but better to use a state
         } catch (error: any) {
-            console.error("Order error:", error);
+            console.error("Scale error placing order:", error);
             alert("Failed to place order: " + error.message);
-        } finally {
             setLoading(false);
         }
     };
 
     if (isOrdered) {
+        const shortId = formData.full_name; // We hijacked this for the success screen
         return (
-            <div className="min-h-screen bg-white flex items-center justify-center px-6">
-                <div className="max-w-md w-full text-center space-y-8 animate-in zoom-in duration-500">
+            <div className="min-h-screen bg-white flex items-center justify-center px-6 pt-20">
+                <div className="max-w-md w-full text-center space-y-10 animate-in zoom-in duration-500">
                     <div className="w-24 h-24 bg-sky/20 rounded-full flex items-center justify-center mx-auto text-sky">
                         <CheckCircle2 size={48} />
                     </div>
                     <div className="space-y-4">
-                        <h1 className="text-4xl font-black text-navy uppercase tracking-tighter">Order Placed!</h1>
+                        <h1 className="text-4xl font-black text-navy uppercase tracking-tighter">Order Success!</h1>
                         <p className="text-navy/60 font-medium leading-relaxed">
-                            Thank you for your purchase! We've received your order and will contact you shortly to confirm delivery details.
+                            Your order is being processed. Save the code below to track your delivery progress.
                         </p>
                     </div>
-                    <button
-                        onClick={() => {
-                            clearCart();
-                            router.push('/');
-                        }}
-                        className="btn-primary w-full"
-                    >
-                        Return to Home
-                    </button>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-navy/20">Order ID: #{Math.floor(Math.random() * 1000000)}</p>
+
+                    <div className="bg-sky/5 border-2 border-dashed border-sky/30 rounded-[2.5rem] p-8 space-y-4 relative group">
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-sky">Your Order Tracking ID</p>
+                        <div className="text-5xl font-black text-navy tracking-widest font-mono">
+                            {shortId}
+                        </div>
+                        <button 
+                            onClick={() => {
+                                navigator.clipboard.writeText(shortId);
+                                alert("Order ID copied to clipboard!");
+                            }}
+                            className="text-[10px] font-bold uppercase tracking-widest text-sky hover:text-navy transition-colors flex items-center justify-center gap-2 mx-auto"
+                        >
+                            <ShoppingBag size={12} /> Click to Copy ID
+                        </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4">
+                        <button
+                            onClick={() => router.push(`/track?id=${shortId}`)}
+                            className="btn-primary w-full py-5 flex items-center justify-center gap-3"
+                        >
+                            <Truck size={20} /> Track My Order Now
+                        </button>
+                        <button
+                            onClick={() => {
+                                clearCart();
+                                router.push('/');
+                            }}
+                            className="btn-secondary w-full"
+                        >
+                            Return to Store
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -110,7 +146,7 @@ export default function BuyPage() {
     }
 
     return (
-        <div className="min-h-screen bg-white pt-20">
+        <div className="min-h-screen bg-white pt-[140px] sm:pt-20">
             <main className="max-w-7xl mx-auto px-6 py-20">
                 <button
                     onClick={() => {

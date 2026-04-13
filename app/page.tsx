@@ -50,7 +50,7 @@ export default function HomePage() {
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .limit(6);
+        .limit(4);
 
       if (data && data.length > 0) {
         setProducts(data);
@@ -60,8 +60,6 @@ export default function HomePage() {
           { id: 2, name: "Matte Finish Pomade", price: 24.00, offer_price: null, category: "Hair products", image_url: "https://images.unsplash.com/photo-1599351431247-f577f9747c9c?w=800&q=80" },
           { id: 3, name: "Titanium Detailer", price: 135.00, offer_price: 110.00, category: "Trimmers", image_url: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800&q=80" },
           { id: 4, name: "Beard Wash", price: 22.00, offer_price: null, category: "Hair products", image_url: "https://images.unsplash.com/photo-1626285861696-9f0bf5a49c6d?w=800&q=80" },
-          { id: 5, name: "Industrial Barber Cape", price: 45.00, offer_price: 35.00, category: "Accessories", image_url: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=800&q=80" },
-          { id: 6, name: "Carbon Fiber Comb", price: 18.00, offer_price: 12.00, category: "Accessories", image_url: "https://images.unsplash.com/photo-1590540179852-211d6b45e390?w=800&q=80" },
         ]);
       }
       setLoading(false);
@@ -94,7 +92,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden pt-20">
+    <div className="min-h-screen bg-white overflow-x-hidden pt-[140px] sm:pt-20">
       {/* --- HERO SECTION --- */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-navy">
         {/* Permanent background layer to prevent blank screen during transitions */}
@@ -133,7 +131,7 @@ export default function HomePage() {
         />
 
         {/* Hero Content */}
-        <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 py-16 sm:py-32 w-full">
           <div className="max-w-2xl">
             <div className="grid">
               <AnimatePresence>
@@ -213,42 +211,43 @@ export default function HomePage() {
       </section>
 
       {/* --- WHY CHOOSE US --- */}
-      <section className="py-32 px-6 bg-navy text-white relative overflow-hidden">
+      <section className="py-12 sm:py-32 px-6 bg-navy text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-sky/10 blur-[100px] -z-0"></div>
-        <div className="max-w-4xl mx-auto text-center space-y-12 relative z-10">
+        <div className="max-w-4xl mx-auto text-center space-y-8 sm:space-y-12 relative z-10">
           <motion.h3
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            className="text-xs font-black uppercase tracking-[0.4em] text-sky"
+            className="text-[10px] sm:text-xs font-black uppercase tracking-[0.4em] text-sky"
           >
             Why Choose Us
           </motion.h3>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-3xl md:text-5xl font-black tracking-tight leading-tight"
+            className="text-xl sm:text-5xl font-black tracking-tight leading-tight"
           >
-            The standard for professional barbering and elite cosmetics supply.
+            The standard for professional barbering and elite cosmetics.
           </motion.p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-12">
+          <div className="grid grid-cols-3 gap-4 sm:gap-12 pt-8 sm:pt-12">
             {[
-              { title: "Precision", desc: "Surgical-grade steel blades for effortless clean cuts." },
-              { title: "Durability", desc: "Built to withstand the most demanding barber shops." },
-              { title: "Innovation", desc: "Leading technology in battery life and motor speed." },
+              { title: "Precision", desc: "Surgical-grade steel blades." },
+              { title: "Durability", desc: "Built for busy shops." },
+              { title: "Innovation", desc: "Leading tech in tools." },
             ].map((feature, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.2 }}
-                className="space-y-4 group"
+                className="space-y-2 sm:space-y-4 group flex flex-col items-center"
               >
-                <div className="w-12 h-12 bg-white/5 mx-auto md:mx-0 rounded-2xl flex items-center justify-center text-sky group-hover:bg-sky group-hover:text-navy transition-all">
-                  <CheckCircle2 size={24} />
+                <div className="w-8 h-8 sm:w-12 sm:h-12 bg-white/5 rounded-xl sm:rounded-2xl flex items-center justify-center text-sky group-hover:bg-sky group-hover:text-navy transition-all">
+                  <CheckCircle2 size={16} className="sm:hidden" />
+                  <CheckCircle2 size={24} className="hidden sm:block" />
                 </div>
-                <h4 className="text-lg font-black uppercase tracking-wider">{feature.title}</h4>
-                <p className="text-sm text-white/40 leading-relaxed">{feature.desc}</p>
+                <h4 className="text-[10px] sm:text-lg font-black uppercase tracking-wider">{feature.title}</h4>
+                <p className="text-[8px] sm:text-sm text-white/40 leading-relaxed max-w-[100px] sm:max-w-none">{feature.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -256,9 +255,9 @@ export default function HomePage() {
       </section>
 
       {/* --- FEATURED PRODUCTS --- */}
-      <section className="py-32 px-6">
+      <section className="py-12 sm:py-32 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-end mb-16">
+          <div className="flex justify-between items-end mb-8 sm:mb-16">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -281,7 +280,7 @@ export default function HomePage() {
             initial="initial"
             whileInView="animate"
             viewport={{ once: true }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10"
+            className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-10"
           >
             {products.map((item) => (
               <motion.div
@@ -289,38 +288,39 @@ export default function HomePage() {
                 variants={fadeIn}
                 className="product-card group"
               >
-                <div className="aspect-[4/5] bg-ice/50 rounded-[2rem] mb-8 overflow-hidden relative">
+                <div className="aspect-[4/5] bg-ice/50 rounded-2xl sm:rounded-[2rem] mb-3 sm:mb-8 overflow-hidden relative">
                   <img
                     src={item.image_url}
                     alt={item.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   {item.offer_price && (
-                    <div className="absolute top-4 left-4 bg-sky text-navy px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl">
-                      Special Offer
+                    <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-sky text-navy px-2 sm:px-4 py-1 sm:py-1.5 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest shadow-xl">
+                      Offer
                     </div>
                   )}
                   <button
                     onClick={() => {
                       addToCart(item);
                     }}
-                    className="absolute bottom-4 right-4 w-12 h-12 bg-white rounded-full flex items-center justify-center text-navy shadow-xl opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-sky hover:text-white"
+                    className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 w-8 h-8 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center text-navy shadow-xl opacity-100 sm:opacity-0 sm:translate-y-4 sm:group-hover:opacity-100 sm:group-hover:translate-y-0 transition-all duration-300 hover:bg-sky hover:text-white"
                   >
-                    <ShoppingCart size={20} />
+                    <ShoppingCart size={14} className="sm:hidden" />
+                    <ShoppingCart size={20} className="hidden sm:block" />
                   </button>
                 </div>
 
-                <div className="space-y-2">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-sky">{item.category}</span>
-                  <h5 className="text-xl font-black text-navy leading-tight uppercase group-hover:text-sky transition-colors">{item.name}</h5>
-                  <div className="flex items-center gap-4 pt-2">
+                <div className="space-y-1 sm:space-y-2">
+                  <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-sky">{item.category}</span>
+                  <h5 className="text-sm sm:text-xl font-black text-navy leading-tight uppercase group-hover:text-sky transition-colors">{item.name}</h5>
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 pt-1 sm:pt-2">
                     {item.offer_price ? (
                       <>
-                        <span className="text-2xl font-black text-navy">Ksh {item.offer_price}</span>
-                        <span className="text-navy/20 text-sm line-through font-bold">Ksh {item.price}</span>
+                        <span className="text-base sm:text-2xl font-black text-navy">Ksh {item.offer_price}</span>
+                        <span className="text-navy/20 text-[10px] sm:text-sm line-through font-bold">Ksh {item.price}</span>
                       </>
                     ) : (
-                      <span className="text-2xl font-black text-navy">Ksh {item.price}</span>
+                      <span className="text-base sm:text-2xl font-black text-navy">Ksh {item.price}</span>
                     )}
                   </div>
                 </div>

@@ -44,7 +44,7 @@
   }
 
   .product-card {
-    @apply bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-navy/5 transition-all duration-500;
+    @apply bg-white p-3 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-navy/5 transition-all duration-500;
   }
 }
 

@@ -456,7 +456,7 @@ function StaffDashboardContent() {
                                     <table className="w-full text-left">
                                         <thead>
                                             <tr className="bg-gray-50 border-b border-gray-100">
-                                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-navy/40">Customer</th>
+                                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-navy/40">ID / Customer</th>
                                                 <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-navy/40">Total</th>
                                                 <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-navy/40">Payment</th>
                                                 <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-navy/40">Status</th>
@@ -469,6 +469,7 @@ function StaffDashboardContent() {
                                                 <tr key={order.id} className="hover:bg-gray-50/50 transition-colors">
                                                     <td className="px-8 py-6">
                                                         <div>
+                                                            <p className="text-[10px] font-black tracking-widest text-sky mb-1">#{order.short_id || order.id.slice(0, 8).toUpperCase()}</p>
                                                             <p className="text-sm font-black text-navy">{order.customer_name}</p>
                                                             <p className="text-[10px] text-navy/40 font-bold">{order.customer_phone}</p>
                                                         </div>

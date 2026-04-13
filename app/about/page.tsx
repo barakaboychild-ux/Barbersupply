@@ -7,7 +7,7 @@ export default function AboutPage() {
     const router = useRouter();
 
     return (
-        <div className="min-h-screen bg-white pt-20">
+        <div className="min-h-screen bg-white pt-[140px] sm:pt-20">
             <header className="bg-ice/30 py-32 px-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-1/2 h-full bg-navy/5 -skew-x-12 origin-top-right"></div>
                 <div className="max-w-7xl mx-auto relative z-10">
