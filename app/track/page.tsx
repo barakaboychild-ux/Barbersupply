@@ -67,7 +67,8 @@ function TrackOrderContent() {
         switch (status) {
             case 'pending': return 1;
             case 'processing': return 2;
-            case 'delivered': return 3;
+            case 'shipped': return 3;
+            case 'delivered': return 4;
             case 'cancelled': return 0;
             default: return 1;
         }
@@ -76,8 +77,14 @@ function TrackOrderContent() {
     const statusSteps = [
         { label: 'Order Placed', status: 'pending', icon: Clock },
         { label: 'Processing', status: 'processing', icon: Package },
+        { label: 'Shipped', status: 'shipped', icon: Truck },
         { label: 'Delivered', status: 'delivered', icon: CheckCircle2 },
     ];
+
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
+        alert("Order ID copied to clipboard!");
+    };
 
     const currentStep = order ? getStatusStep(order.status) : 0;
 
@@ -92,10 +99,37 @@ function TrackOrderContent() {
                         <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
                         Back to Home
                     </button>
-                    <h1 className="text-4xl md:text-6xl font-black text-navy uppercase tracking-tighter leading-none">
-                        Track Your <br /><span className="text-sky text-stroke">Order</span>
-                    </h1>
-                    <p className="text-navy/40 font-medium">Enter your Order ID to see real-time delivery status.</p>
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div className="space-y-4">
+                            <h1 className="text-4xl md:text-6xl font-black text-navy uppercase tracking-tighter leading-none">
+                                Track Your <br /><span className="text-sky text-stroke">Order</span>
+                            </h1>
+                            <p className="text-navy/40 font-medium">Enter your Order ID to see real-time delivery status.</p>
+                        </div>
+                        
+                        {order && (
+                            <motion.div 
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="bg-navy p-6 rounded-[2rem] text-white flex flex-col items-center gap-2 shadow-2xl relative overflow-hidden group border border-white/5"
+                            >
+                                <div className="absolute inset-0 bg-sky/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-sky/60 relative z-10">Active Tracking ID</span>
+                                <div className="flex items-center gap-4 relative z-10">
+                                    <span className="text-2xl font-black tracking-widest font-mono text-white">
+                                        {order.short_id || order.id.slice(0, 8).toUpperCase()}
+                                    </span>
+                                    <button 
+                                        onClick={() => copyToClipboard(order.short_id || order.id)}
+                                        className="p-2 bg-white/10 rounded-xl hover:bg-sky hover:text-navy transition-all"
+                                        title="Copy ID"
+                                    >
+                                        <ShoppingBag size={14} />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+                    </div>
                 </header>
 
                 {/* Search Bar */}
@@ -105,7 +139,7 @@ function TrackOrderContent() {
                             <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-navy/20" size={20} />
                             <input
                                 type="text"
-                                placeholder="PASTE ORDER ID HERE (e.g. 550e8400-e29b-41d4-a716-446655440000)"
+                                placeholder="PASTE ORDER ID HERE"
                                 className="w-full pl-14 pr-6 py-5 bg-gray-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-sky/20 transition-all outline-none"
                                 value={orderId}
                                 onChange={(e) => setOrderId(e.target.value)}
@@ -159,7 +193,7 @@ function TrackOrderContent() {
                             className="space-y-8"
                         >
                             {/* Status Stepper */}
-                            <div className="bg-white p-12 rounded-[3.5rem] shadow-xl border border-gray-100">
+                            <div className="bg-white p-12 rounded-[3.5rem] shadow-xl border border-gray-100 overflow-x-auto">
                                 {order.status === 'cancelled' ? (
                                     <div className="text-center py-4 space-y-4">
                                         <div className="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto">
@@ -169,7 +203,7 @@ function TrackOrderContent() {
                                         <p className="text-navy/40 font-medium">This order has been cancelled. Please contact support if you have questions.</p>
                                     </div>
                                 ) : (
-                                    <div className="relative flex justify-between items-center max-w-2xl mx-auto">
+                                    <div className="relative flex justify-between items-center min-w-[600px] md:min-w-0 max-w-3xl mx-auto px-4 md:px-0">
                                         {/* Progress Line */}
                                         <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-100 -translate-y-1/2 z-0" />
                                         <div 
@@ -186,11 +220,11 @@ function TrackOrderContent() {
                                                         <Icon size={24} />
                                                     </div>
                                                     <div className="flex flex-col items-center">
-                                                        <span className={`text-[10px] font-black uppercase tracking-widest ${isActive ? 'text-navy' : 'text-navy/20'}`}>
+                                                        <span className={`text-[9px] font-black uppercase tracking-widest ${isActive ? 'text-navy' : 'text-navy/20'}`}>
                                                             {step.label}
                                                         </span>
                                                         {isActive && idx + 1 === currentStep && (
-                                                            <span className="text-[8px] font-bold text-sky animate-pulse uppercase tracking-[0.2em] mt-1">Current State</span>
+                                                            <span className="text-[7px] font-bold text-sky animate-pulse uppercase tracking-[0.2em] mt-1">Status: Active</span>
                                                         )}
                                                     </div>
                                                 </div>

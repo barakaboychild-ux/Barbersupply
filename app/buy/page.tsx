@@ -77,18 +77,30 @@ export default function BuyPage() {
         }
     };
 
+    // In the component body, add effects for redirection
+    useEffect(() => {
+        if (isOrdered) {
+            const shortId = formData.full_name; // Hijacked for success screen
+            const timer = setTimeout(() => {
+                clearCart();
+                router.push(`/track?id=${shortId}`);
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [isOrdered]);
+
     if (isOrdered) {
         const shortId = formData.full_name; // We hijacked this for the success screen
         return (
             <div className="min-h-screen bg-white flex items-center justify-center px-6 pt-20">
                 <div className="max-w-md w-full text-center space-y-10 animate-in zoom-in duration-500">
                     <div className="w-24 h-24 bg-sky/20 rounded-full flex items-center justify-center mx-auto text-sky">
-                        <CheckCircle2 size={48} />
+                        <CheckCircle2 size={48} className="animate-bounce" />
                     </div>
                     <div className="space-y-4">
                         <h1 className="text-4xl font-black text-navy uppercase tracking-tighter">Order Success!</h1>
                         <p className="text-navy/60 font-medium leading-relaxed">
-                            Your order is being processed. Save the code below to track your delivery progress.
+                            Your order is being processed. You will be redirected to the tracking page in a few seconds...
                         </p>
                     </div>
 
@@ -110,20 +122,19 @@ export default function BuyPage() {
 
                     <div className="grid grid-cols-1 gap-4">
                         <button
-                            onClick={() => router.push(`/track?id=${shortId}`)}
-                            className="btn-primary w-full py-5 flex items-center justify-center gap-3"
-                        >
-                            <Truck size={20} /> Track My Order Now
-                        </button>
-                        <button
                             onClick={() => {
                                 clearCart();
-                                router.push('/');
+                                router.push(`/track?id=${shortId}`);
                             }}
-                            className="btn-secondary w-full"
+                            className="btn-primary w-full py-5 flex items-center justify-center gap-3"
                         >
-                            Return to Store
+                            <Truck size={20} /> Go to Tracking Now
                         </button>
+                    </div>
+
+                    <div className="flex items-center justify-center gap-2 text-navy/20">
+                        <Loader2 size={12} className="animate-spin" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Redirecting ...</span>
                     </div>
                 </div>
             </div>

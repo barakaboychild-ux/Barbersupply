@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Plus, Edit, Trash2, LogOut, Package, Image as ImageIcon, Loader2, Save, X, ShoppingBag, Eye, ChevronDown } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
-type Tab = 'products' | 'orders' | 'settings';
+type Tab = 'products' | 'orders' | 'messages' | 'settings';
 
 function StaffDashboardContent() {
     const router = useRouter();
@@ -22,6 +22,8 @@ function StaffDashboardContent() {
     const [orderItems, setOrderItems] = useState<any[]>([]);
     const [isRefreshingOrders, setIsRefreshingOrders] = useState(false);
     const [orderView, setOrderView] = useState<'active' | 'history'>('active');
+    const [messages, setMessages] = useState<any[]>([]);
+    const [isRefreshingMessages, setIsRefreshingMessages] = useState(false);
 
     const [settings, setSettings] = useState({
         social_instagram: '',
@@ -45,11 +47,12 @@ function StaffDashboardContent() {
         checkAuth();
         fetchProducts();
         fetchOrders();
+        fetchMessages();
         fetchSettings();
     }, []);
 
     useEffect(() => {
-        if (tabParam === 'products' || tabParam === 'orders' || tabParam === 'settings') {
+        if (['products', 'orders', 'messages', 'settings'].includes(tabParam || '')) {
             setActiveTab(tabParam as Tab);
         }
     }, [tabParam]);
@@ -127,6 +130,28 @@ function StaffDashboardContent() {
 
         // Artificial delay so the user sees the refresh actually happening
         setTimeout(() => setIsRefreshingOrders(false), 500);
+    };
+
+    const fetchMessages = async () => {
+        setIsRefreshingMessages(true);
+        const { data, error } = await supabase
+            .from('contact_messages')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (data) setMessages(data);
+        setTimeout(() => setIsRefreshingMessages(false), 500);
+    };
+
+    const markMessageAsRead = async (id: string, is_read: boolean) => {
+        const { error } = await supabase
+            .from('contact_messages')
+            .update({ is_read })
+            .eq('id', id);
+
+        if (!error) {
+            fetchMessages();
+        }
     };
 
     const fetchOrderItems = async (orderId: string) => {
@@ -246,6 +271,7 @@ function StaffDashboardContent() {
         switch (status) {
             case 'pending': return 'bg-amber-50 text-amber-600 border-amber-200';
             case 'processing': return 'bg-blue-50 text-blue-600 border-blue-200';
+            case 'shipped': return 'bg-purple-50 text-purple-600 border-purple-200';
             case 'delivered': return 'bg-green-50 text-green-600 border-green-200';
             case 'cancelled': return 'bg-red-50 text-red-600 border-red-200';
             default: return 'bg-gray-50 text-gray-600 border-gray-200';
@@ -265,7 +291,7 @@ function StaffDashboardContent() {
 
     const displayedOrders = orders.filter(o =>
         orderView === 'active'
-            ? ['pending', 'processing'].includes(o.status)
+            ? ['pending', 'processing', 'shipped'].includes(o.status)
             : ['delivered', 'cancelled'].includes(o.status)
     );
 
@@ -302,6 +328,24 @@ function StaffDashboardContent() {
                                     <Plus size={20} />
                                     Add New Product
                                 </button>
+                            </div>
+
+                            <div className="flex gap-4 mb-8">
+                                {(['products', 'orders', 'messages', 'settings'] as const).map((tab) => (
+                                    <button
+                                        key={tab}
+                                        onClick={() => setActiveTab(tab)}
+                                        className={`px-8 py-4 rounded-full text-xs font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-navy text-white shadow-xl' : 'bg-white text-navy/40 hover:bg-gray-50 border border-gray-100'}`}
+                                    >
+                                        {tab}
+                                        {tab === 'orders' && pendingOrdersCount > 0 && (
+                                            <span className="ml-2 bg-sky text-navy px-2 py-0.5 rounded-full text-[8px] animate-pulse">{pendingOrdersCount}</span>
+                                        )}
+                                        {tab === 'messages' && messages.filter(m => !m.is_read).length > 0 && (
+                                            <span className="ml-2 bg-red-500 text-white px-2 py-0.5 rounded-full text-[8px] animate-pulse">{messages.filter(m => !m.is_read).length}</span>
+                                        )}
+                                    </button>
+                                ))}
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -491,6 +535,7 @@ function StaffDashboardContent() {
                                                             >
                                                                 <option value="pending">Pending</option>
                                                                 <option value="processing">Processing</option>
+                                                                <option value="shipped">Shipped</option>
                                                                 <option value="delivered">Delivered</option>
                                                                 <option value="cancelled">Cancelled</option>
                                                             </select>
@@ -525,6 +570,74 @@ function StaffDashboardContent() {
                                     </table>
                                 </div>
                             )}
+                        </>
+                    )}
+
+                    {/* ==================== MESSAGES TAB ==================== */}
+                    {activeTab === 'messages' && (
+                        <>
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                                <div className="space-y-2">
+                                    <h1 className="text-4xl font-black text-navy uppercase tracking-tighter">Contact <br /><span className="text-sky text-stroke">Messages</span></h1>
+                                    <p className="text-navy/40 font-medium">Read and respond to customer inquiries.</p>
+                                </div>
+                                <button
+                                    onClick={fetchMessages}
+                                    disabled={isRefreshingMessages}
+                                    className="btn-secondary flex items-center gap-3 py-4 disabled:opacity-50"
+                                >
+                                    <Loader2 size={18} className={isRefreshingMessages ? "animate-spin" : ""} />
+                                    {isRefreshingMessages ? "Refreshing..." : "Refresh"}
+                                </button>
+                            </div>
+
+                            <div className="bg-white rounded-[3rem] shadow-xl border border-gray-100 overflow-hidden">
+                                {messages.length === 0 ? (
+                                    <div className="p-20 text-center text-navy/20 font-black uppercase tracking-widest">No messages yet</div>
+                                ) : (
+                                    <table className="w-full text-left">
+                                        <thead>
+                                            <tr className="bg-gray-50 border-b border-gray-100">
+                                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-navy/40">From</th>
+                                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-navy/40">Message</th>
+                                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-navy/40">Date</th>
+                                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-navy/40 text-right">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-100">
+                                            {messages.map((msg) => (
+                                                <tr key={msg.id} className={`hover:bg-gray-50/50 transition-colors ${msg.is_read ? 'opacity-50' : ''}`}>
+                                                    <td className="px-8 py-6">
+                                                        <p className="text-sm font-black text-navy uppercase">{msg.full_name}</p>
+                                                        <p className="text-[10px] text-navy/40 font-bold">{msg.email}</p>
+                                                        <p className="text-[10px] text-navy/40 font-bold">{msg.phone}</p>
+                                                    </td>
+                                                    <td className="px-8 py-6">
+                                                        <p className="text-sm text-navy/80 font-medium leading-relaxed max-w-lg mb-2">{msg.message}</p>
+                                                    </td>
+                                                    <td className="px-8 py-6">
+                                                        <p className="text-[10px] font-bold text-navy/40">
+                                                            {new Date(msg.created_at).toLocaleDateString('en-GB', {
+                                                                day: 'numeric',
+                                                                month: 'short',
+                                                                year: 'numeric'
+                                                            })}
+                                                        </p>
+                                                    </td>
+                                                    <td className="px-8 py-6 text-right">
+                                                        <button
+                                                            onClick={() => markMessageAsRead(msg.id, !msg.is_read)}
+                                                            className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${msg.is_read ? 'bg-gray-100 text-navy' : 'bg-sky text-navy'}`}
+                                                        >
+                                                            {msg.is_read ? 'Read' : 'Mark as Read'}
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                )}
+                            </div>
                         </>
                     )}
 
