@@ -30,7 +30,7 @@ export default function Header() {
                     <div className="flex items-center gap-2 sm:gap-4">
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="text-white/60 hover:text-sky transition-colors p-2 lg:hidden"
+                            className="text-white/60 hover:text-sky transition-colors p-2"
                         >
                             <Menu size={24} />
                         </button>
